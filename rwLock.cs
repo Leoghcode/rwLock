@@ -16,7 +16,7 @@ namespace RWLock
         public static void printWaitThread()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("WaitQueue contains:");
+            Console.WriteLine("\nWaitQueue contains:");
             if (waitQueue.Count() != 0)
                 foreach (String wthread in waitQueue)
                 {
@@ -24,6 +24,7 @@ namespace RWLock
                 }
             else
                 Console.WriteLine("empty!");
+            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Gray;
 
         }
@@ -68,6 +69,7 @@ namespace RWLock
                 if(rcount!=0)
                 {
                     waitQueue.Add("WriteThread:" + Thread.CurrentThread.ManagedThreadId);
+                    printWaitThread();
                     w_wcount++;
                     while (!Interlocked.Equals(rcount, 0))
                     {
@@ -78,8 +80,11 @@ namespace RWLock
                 if (wcount != 0)
                 {
                     w_wcount++;
-                    if(!waitQueue.Contains("WriteThread:" + Thread.CurrentThread.ManagedThreadId))
+                    if (!waitQueue.Contains("WriteThread:" + Thread.CurrentThread.ManagedThreadId))
+                    {
                         waitQueue.Add("WriteThread:" + Thread.CurrentThread.ManagedThreadId);
+                        printWaitThread();
+                    }
                     while (!Interlocked.Equals(wcount, 0))
                     {
                         Monitor.Pulse(this);
